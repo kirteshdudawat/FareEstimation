@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FareEstimationWorkflow implements Workflow<EventMetadata> {
-    public String name = "FareEstimationWorkflow";
+    private String name = "FareEstimationWorkflow";
 
     private ParseEventToMessageDataStep parseEventToMessageDataStep = new ParseEventToMessageDataStep();
     private ParseDateTimeStep parseDateTimeStep = new ParseDateTimeStep();
@@ -20,6 +20,7 @@ public class FareEstimationWorkflow implements Workflow<EventMetadata> {
     private EventBasedFareCalculatorStep eventBasedFareCalculatorStep = new EventBasedFareCalculatorStep();
     private UpdateJvmCache updateJvmCache = new UpdateJvmCache();
     private SkippedFailedFileCreationStep skippedFailedFileCreationStep = new SkippedFailedFileCreationStep();
+    private DefaultFailureStep defaultFailureStep = new DefaultFailureStep();
 
     @Override
     public String getName() {
@@ -33,7 +34,7 @@ public class FareEstimationWorkflow implements Workflow<EventMetadata> {
 
     @Override
     public String getDefaultFailureStepForUnhandledException() {
-        return skippedFailedFileCreationStep.getName();
+        return defaultFailureStep.getName();
     }
 
     @Override
@@ -49,6 +50,7 @@ public class FareEstimationWorkflow implements Workflow<EventMetadata> {
         map.put(eventBasedFareCalculatorStep.getName(), eventBasedFareCalculatorStep);
         map.put(updateJvmCache.getName(), updateJvmCache);
         map.put(skippedFailedFileCreationStep.getName(), skippedFailedFileCreationStep);
+        map.put(defaultFailureStep.getName(), defaultFailureStep);
 
         return map;
     }

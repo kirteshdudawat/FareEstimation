@@ -4,12 +4,16 @@ import com.kirtesh.fareestimation.cache.JvmCache;
 import com.kirtesh.fareestimation.cache.JvmPreviousEvent;
 import com.kirtesh.fareestimation.exception.ServiceException;
 import com.kirtesh.fareestimation.models.EventMetadata;
+import com.kirtesh.fareestimation.utility.CustomFileWriter;
 import com.kirtesh.fareestimation.workflow.framework.Workflow;
 import com.kirtesh.fareestimation.workflow.framework.WorkflowExecutor;
 import com.kirtesh.fareestimation.workflow.framework.dtos.ExecutorResponse;
 import com.kirtesh.fareestimation.workflow.framework.dtos.WorkflowMessage;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +34,11 @@ public class FareEstimationWorkflowTest {
         public void resetData() throws ServiceException {
             JvmCache.loadCache();
             JvmPreviousEvent.resetCache();
+            try {
+                CustomFileWriter.initialize("./success.csv", "./skipped.csv");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         public void validateParseEventToMessageDataStepForSuccess(ExecutorResponse<EventMetadata> element, long rideId, double lat, double longitude, long epoch) {
@@ -185,7 +194,7 @@ public class FareEstimationWorkflowTest {
     @DisplayName("Test FareEstimationWorkflow with ride having less than minimum fare")
     @Test
     @Order(4)
-    void testFlowWithLessThanMinimumFareRideEventForFareEstimationWorkflow() throws ServiceException {
+    void testFlowWithLessThanMinimumFareRideEventForFareEstimationWorkflow() throws ServiceException, IOException {
         Fixture f = new Fixture();
         f.resetData();
 
@@ -225,6 +234,8 @@ public class FareEstimationWorkflowTest {
         f.validateCalculateSpeedStepForSuccess(thirdEvent.get(6), 0.0);
         f.validateEventBasedFareCalculatorStepForSuccess(thirdEvent.get(7), 1.3);
         f.validateStepForSuccess(thirdEvent.get(8), "UpdateJvmCache");
-    }
 
+        Files.delete(Paths.get("./success.csv"));
+        Files.delete(Paths.get("./skipped.csv"));
+    }
 }

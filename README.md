@@ -1,10 +1,7 @@
 # FareEstimation
 
 ### NOTE: 
-In current implementation, test and code uses same success / skipped files, currently user needs to manually delete success / skipped files else code will just append to existing file.
-
-Also, in case you process same file twice, it will append to existing success / skipped file. Make sure to provide a new file-name or delete existing files before processing a new event file.
-This will be fixed soon with "accepting file name from user in command-line parameters" issue. 
+If you give same file path back, it will override the existing file. 
 
 ## Problem statement
 Our drivers perform thousands of rides per day. In order to ensure that our passengers always receive the highest quality of service possible, we need to be able to identify mis-behaving drivers that overcharge passengers and block them from our service.
@@ -39,9 +36,8 @@ If car is moving (U <= 10km/h), it will be considered as idle and 11.90 per hour
 
 ## Drawback of current implementations:
 1. Change fare calculation logic to be separated eventually over time-difference between two events. Currently, its works on last event time only.
-2. Accept file-name of success / event / skipped files from command-line, with current implementation user needs to change path manually and re-build jar everytime. Also, it will help multiple file name problem.
-3. FareCalculationUtility should be migrated to MVEL library (rule based fare calculation), Fare calculation logic is expected to change quite often and it could be made dynamic with MVEL library.
-4. Dockerize the application.
+2. FareCalculationUtility should be migrated to MVEL library (rule based fare calculation), Fare calculation logic is expected to change quite often and it could be made dynamic with MVEL library.
+3. Dockerize the application.
 
 ## High Level Design:
 ### Reading Events
@@ -57,8 +53,8 @@ If car is moving (U <= 10km/h), it will be considered as idle and 11.90 per hour
    
 3. Output file generation
    We are generating 3 output log files,
-   3.1. success.csv at path defined in FareEstimate.java containing ride_id and its final cost via Logger.
-   3.2. skipped.csv at path defined in log4j.properties containing events, which we skipped or failed to process 
+   3.1. success file at path defined in command line parameters containing ride_id and its final cost.
+   3.2. skipped event csv file at path defined in command line parameters containing events, which we skipped or failed to process 
         (In next phase we will also add reason to why we skipped / failed those event against those events in same file as a new column.)
    3.3. app.log in project run directory for debugging purposes.
    
@@ -76,36 +72,15 @@ If car is moving (U <= 10km/h), it will be considered as idle and 11.90 per hour
     1.2. Go to project directory/workspace. Project directory path would be something like: 
     `/Users/<YOUR_SYSTEM_PATH_HERE>/FareEstimation`
 
-    1.3. Intermediate prerequestie (THIS STEP WILL BE DELETED, WE WILL ACCEPT PARAMETER VIA COMMAND LINE): 
-        1.3.1. Make sure you have provided correct path to events file for processing in FareEstimation.java class.
-        1.3.2. Make sure you have provided correct path to response and skipped files in log4j.properties file at line 25 / 33.
+    1.3. In the project directory, execute following commands:
+        1.3.1. `mvn clean compile`
+        1.3.2. `mvn package`
 
-    1.4. In the project directory, execute following commands:
-        1.4.1. `mvn clean compile`
-        1.4.2. `mvn package`
-
-    1.5. To run the project use command in same directory / workspace:
-        1.5.1. `java -jar target/FareEstimation-1.0-jar-with-dependencies.jar`
-
-
-### 2. Using IntelliJ IDEA
-    2.1. Prerequisites:
-         Make sure you have IntelliJ to import / open maven based java - maven based projects.
-         Make sure you have JDK and Maven plugins installed or you could manually install JDK and Maven.   
-
-    2.2. Once you import the project in IntelliJ, follow the below mentioned steps:
-        2.2.1. Intermediate prerequestie (THIS STEP WILL BE DELETED, WE WILL ACCEPT PARAMETER VIA COMMAND LINE):
-            2.2.1.1. Make sure you have provided correct path to events file for processing in FareEstimation.java class.
-            2.2.1.2. Make sure you have provided correct path to response and skipped files in log4j.properties file at line 25 / 33.
-
-        2.2.2. Go to FareEstimation.java file, and Run FareEstimation class. 
-               (FareEstimation is entry point for application)
-
-    2.3. To verify application has successfully started, 
-        2.3.1. You will see code will start processing file.
+    1.4. To run the project use command in same directory / workspace:
+        1.4.1. `java -jar target/FareEstimation-1.0-jar-with-dependencies.jar /Users/kirteshdudawat/Desktop/Files/paths.csv /Users/kirteshdudawat/Desktop/Files/success.csv /Users/kirteshdudawat/Desktop/Files/skipped.csv`
 
 # How to run test?
 Use command `mvn test` in terminal to run all test cases.
 
 # Performance:
-We could process >400 events per second with single thread.
+We are processing more than ~500 events per second with single thread.

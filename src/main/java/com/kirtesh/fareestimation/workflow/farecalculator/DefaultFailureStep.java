@@ -11,11 +11,11 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.util.Optional;
 
-public class SkippedFailedFileCreationStep implements WorkflowStep<EventMetadata> {
+public class DefaultFailureStep implements WorkflowStep<EventMetadata> {
 
-    private final static Logger logger = LogManager.getLogger(SkippedFailedFileCreationStep.class);
+    private final static Logger logger = LogManager.getLogger(DefaultFailureStep.class);
 
-    private String name = "SkippedFailedFileCreationStep";
+    private String name = "DefaultFailureStep";
 
     @Override
     public String getName() {
@@ -25,12 +25,7 @@ public class SkippedFailedFileCreationStep implements WorkflowStep<EventMetadata
     @Override
     public WorkflowStepResponse<EventMetadata> process(EventMetadata metadata) {
 
-        try {
-            CustomFileWriter.writeToSkippedFile(metadata.getEventString());
-        } catch (IOException e) {
-            logger.error("Unable to write to failed file.");
-            e.printStackTrace();
-        }
+        logger.error("UNABLE TO HANDLE EXCEPTION IN FLOW, " + metadata.toString());
         return generateResponse(metadata, StatusCodes.SUCCESS);
     }
 

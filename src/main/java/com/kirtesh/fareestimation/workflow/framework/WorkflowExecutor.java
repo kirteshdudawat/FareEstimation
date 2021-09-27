@@ -33,7 +33,6 @@ public class WorkflowExecutor<T> {
                 stepDefinition = workflow.getStepDefinitions().get(executingStep.get());
                 response = stepDefinition.process(response.getResponseObject());
                 _response.add(new ExecutorResponse(executingStep.get(), response.getStatusMessage(), response.getResponseObject()));
-                logger.info("Response from executingStep " + executingStep.get() + " is " + response);
                 executingStep = stepDefinition.nextStep(response.getResponseObject(), StatusCodes.fromString(response.getStatusMessage()));
             } catch (Exception e) {
                 logger.error("Unhandled exception in some step, skipping event.");

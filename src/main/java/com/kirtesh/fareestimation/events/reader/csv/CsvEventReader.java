@@ -27,7 +27,6 @@ public class CsvEventReader implements EventReader<EventMetadata> {
     @Override
     public void readEvents(WorkflowExecutor<EventMetadata> executor) {
         try (Stream<String> stream = Files.lines(Paths.get(csvPath))) {
-            // Filter Empty String
             stream.forEach( data -> {
                 EventMetadata metadata = new EventMetadata(data);
                 executor.executeWorkflow(new WorkflowMessage<>(metadata, UUID.randomUUID().toString(), Optional.empty(), 3, Optional.empty()));

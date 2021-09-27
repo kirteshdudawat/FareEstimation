@@ -57,6 +57,7 @@ public class EventBasedFareCalculatorStep implements WorkflowStep<EventMetadata>
             return Optional.of("UpdateJvmCache");
         }
 
+        logger.info(eventMetadata.toString());
         return Optional.of("SkippedFailedFileCreationStep");
     }
 }
