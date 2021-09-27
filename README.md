@@ -41,17 +41,17 @@ If car is moving (U <= 10km/h), it will be considered as idle and 11.90 per hour
 
 ## High Level Design:
 ### Reading Events
-1. We have created a factory to read events, so as to have multiple implementation, 
+   We have created a factory to read events, so as to have multiple implementation, 
    We expect in that in future events will come via a queue rather than CSV as it will allow us to do concurrent processing of separate rides.
    We have provided CSV reader implementation to EventReader Interface in `com.kirtesh.fareestimation.events` package.
    We have read file as Stream (record-by-record) as in case we have too many events, we do not run out of heap memory.
-   
-2. Processing events
+
+### Processing events
    We have created a workflow for event processing, framework for workflow is in `com.kirtesh,fareestimation.workflow.framework`
    Idea behind work-flow was that we may require more steps (like data-filtering etc) in future. So it gives us a way to make code easy to maintain and we could add changes quickly.
    Whenever we get an event, that event is passed on workflow for processing / filtering / result generation.
-   
-3. Output file generation
+
+### Output file generation
    We are generating 3 output log files,
    3.1. success file at path defined in command line parameters containing ride_id and its final cost.
    3.2. skipped event csv file at path defined in command line parameters containing events, which we skipped or failed to process 
