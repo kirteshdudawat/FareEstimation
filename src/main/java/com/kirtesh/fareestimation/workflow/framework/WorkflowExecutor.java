@@ -20,6 +20,7 @@ public class WorkflowExecutor<T> {
         this.workflow = workflow;
     }
 
+    // Return value to this method is required for testing only.
     public List<ExecutorResponse<EventMetadata>> executeWorkflow(WorkflowMessage<T> metadata) {
         List<ExecutorResponse<EventMetadata>> _response = new LinkedList<>();
         Optional<String> executingStep = metadata.getStep().isPresent()? metadata.getStep(): Optional.of(workflow.getStartingStep());

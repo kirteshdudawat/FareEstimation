@@ -106,3 +106,6 @@ If car is moving (U <= 10km/h), it will be considered as idle and 11.90 per hour
 
 # How to run test?
 Use command `mvn test` in terminal to run all test cases.
+
+# Performance:
+We could process >400 events per second with single thread.
