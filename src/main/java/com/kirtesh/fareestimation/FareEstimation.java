@@ -18,12 +18,13 @@ public class FareEstimation {
     private final static Logger successLogger = LogManager.getLogger("success");
 
     public static void main(String[] args) {
+        String eventFilePath = "/Users/kirteshdudawat/Desktop/Files/paths.csv";
+
         try {
             JvmCache.loadCache();
         } catch (ServiceException e) {
             System.exit(1);
         }
-        String eventFilePath = "/Users/kirteshdudawat/Desktop/Files/paths.csv";
 
         RoutingFactory routingFactory = new RoutingFactory(eventFilePath);
 
